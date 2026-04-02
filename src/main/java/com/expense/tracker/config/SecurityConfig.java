@@ -13,9 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,14 +36,23 @@ public class SecurityConfig {
         return authConfig.getAuthenticationManager();
     }
 
+    // 🔥 FIXED CORS CONFIG
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000"));
-        config.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS"));
+
+        // ✅ IMPORTANT: allow your frontend URL
+        config.setAllowedOriginPatterns(List.of("*")); // allow all (easy fix)
+
+        config.setAllowedMethods(Arrays.asList(
+                "GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+
+        UrlBasedCorsConfigurationSource source =
+                new UrlBasedCorsConfigurationSource();
+
         source.registerCorsConfiguration("/**", config);
         return source;
     }
@@ -58,9 +65,10 @@ public class SecurityConfig {
             .sessionManagement(sess ->
                 sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // Public endpoints – no token needed
-                .requestMatchers("/api/auth/**").permitAll()
-                // All other /api/** endpoints require a valid JWT
+
+                // 🔥 FIX PATH (important)
+                .requestMatchers("/auth/**").permitAll()
+
                 .requestMatchers("/api/**").authenticated()
                 .anyRequest().permitAll()
             )

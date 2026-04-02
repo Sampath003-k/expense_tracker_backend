@@ -12,8 +12,8 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("*")   // 🔥 allow all (for now)
-                        .allowedMethods("*")
+                        .allowedOrigins("*") // 🔥 allow all
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*");
             }
         };
