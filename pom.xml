@@ -94,7 +94,10 @@
         </dependency>
 
     </dependencies>
-
+<dependency>
+    <groupId>org.postgresql</groupId>
+    <artifactId>postgresql</artifactId>
+</dependency>
     <!-- Build -->
     <build>
         <plugins>
