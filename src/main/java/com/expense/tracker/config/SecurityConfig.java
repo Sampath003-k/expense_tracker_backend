@@ -15,7 +15,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -36,16 +35,19 @@ public class SecurityConfig {
         return authConfig.getAuthenticationManager();
     }
 
-    // 🔥 FIXED CORS CONFIG
+    // ✅ FINAL CORS CONFIG (FIXED)
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        // ✅ IMPORTANT: allow your frontend URL
-        config.setAllowedOriginPatterns(List.of("*")); // allow all (easy fix)
+        // ✅ ONLY THIS (important)
+        config.setAllowedOrigins(List.of(
+            "https://expense-tracker-frontend-t6lu.onrender.com"
+        ));
 
-        config.setAllowedMethods(Arrays.asList(
-                "GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of(
+            "GET", "POST", "PUT", "DELETE", "OPTIONS"
+        ));
 
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
@@ -66,10 +68,12 @@ public class SecurityConfig {
                 sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
 
-                // 🔥 FIX PATH (important)
+                // ✅ PUBLIC APIs
                 .requestMatchers("/auth/**").permitAll()
 
+                // ✅ PROTECTED APIs
                 .requestMatchers("/api/**").authenticated()
+
                 .anyRequest().permitAll()
             )
             .addFilterBefore(jwtRequestFilter,
