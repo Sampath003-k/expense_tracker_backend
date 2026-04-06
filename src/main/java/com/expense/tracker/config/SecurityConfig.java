@@ -15,6 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -35,18 +36,20 @@ public class SecurityConfig {
         return authConfig.getAuthenticationManager();
     }
 
-    // ✅ FINAL CORS CONFIG (FIXED)
+    // 🔥 FIXED CORS (LOCAL + RENDER BOTH)
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        // ✅ ONLY THIS (important)
-        config.setAllowedOrigins(List.of(
-            "https://expense-tracker-frontend-t6lu.onrender.com"
+        // ✅ Allow BOTH localhost + deployed frontend
+        config.setAllowedOriginPatterns(List.of(
+                "http://localhost:3000",
+                "https://expense-tracker-frontend-t6lu.onrender.com",
+                "*"   // optional (safe for development)
         ));
 
-        config.setAllowedMethods(List.of(
-            "GET", "POST", "PUT", "DELETE", "OPTIONS"
+        config.setAllowedMethods(Arrays.asList(
+                "GET", "POST", "PUT", "DELETE", "OPTIONS"
         ));
 
         config.setAllowedHeaders(List.of("*"));
