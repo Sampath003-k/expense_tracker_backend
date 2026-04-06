@@ -17,8 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:3000")
+@RequestMapping("/api/auth")   // ✅ correct path
 public class AuthController {
 
     @Autowired private AuthenticationManager authenticationManager;
@@ -26,7 +25,7 @@ public class AuthController {
     @Autowired private PasswordEncoder passwordEncoder;
     @Autowired private JwtUtil jwtUtil;
 
-    // ── POST /api/auth/login ──────────────────────────────────────────────
+    // ✅ LOGIN
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         try {
@@ -40,15 +39,18 @@ public class AuthController {
         }
 
         String token = jwtUtil.generateToken(request.getUsername());
+
         return ResponseEntity.ok(
             new LoginResponse(token, request.getUsername(), "Login successful"));
     }
 
-    // ── POST /api/auth/register ───────────────────────────────────────────
+    // ✅ REGISTER
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+
         if (request.getUsername() == null || request.getUsername().isBlank()
                 || request.getPassword() == null || request.getPassword().isBlank()) {
+
             return ResponseEntity
                 .badRequest()
                 .body(Map.of("message", "Username and password are required"));
@@ -64,6 +66,7 @@ public class AuthController {
             request.getUsername(),
             passwordEncoder.encode(request.getPassword())
         );
+
         userRepository.save(user);
 
         return ResponseEntity
